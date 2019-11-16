@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void connect(){
 
-        String clientEndpoint = "<prefix>.iot.<region>.amazonaws.com";       // replace <prefix> and <region> with your own
-        String clientId = "<unique client id>";                              // replace with your own client ID. Use unique client IDs for concurrent connections.
+        String clientEndpoint = "ajllz5y3u98na-ats.iot.us-west-2.amazonaws.com";       // replace <prefix> and <region> with your own
+        String clientId = "DoorWatchAppClient1";                              // replace with your own client ID. Use unique client IDs for concurrent connections.
         String certificateFile = "<certificate file>";                       // X.509 based certificate file
         String privateKeyFile = "<private key file>";                        // PKCS#1 or PKCS#8 PEM encoded private key file
 
