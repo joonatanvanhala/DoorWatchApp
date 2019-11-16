@@ -3,8 +3,11 @@ package com.example.doorwatchapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.FileUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,9 +24,17 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -60,21 +71,40 @@ public class MainActivity extends AppCompatActivity {
 
         String clientEndpoint = "ajllz5y3u98na-ats.iot.us-west-2.amazonaws.com";       // replace <prefix> and <region> with your own
         String clientId = "DoorWatchAppClient1";                              // replace with your own client ID. Use unique client IDs for concurrent connections.
-        String certificateFile = "/Users/joonatanvanhala/AndroidStudioProjects/DoorWatchApp/app/src/main/java/com/example/doorwatchapp/f524ac081d-certificate.pem.crt";                       // X.509 based certificate file
-        String privateKeyFile = "/Users/joonatanvanhala/AndroidStudioProjects/DoorWatchApp/app/src/main/java/com/example/doorwatchapp/f524ac081d-private.pem.key";                        // PKCS#1 or PKCS#8 PEM encoded private key file
 
-        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(certificateFile, privateKeyFile);
-        client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+        //get files
+        InputStream in1 = null;
+        InputStream in2 = null;
         try {
-            System.out.println("Connecting");
-            client.connect();
-        } catch (AWSIotException e) {
-            System.out.println("ERROR");
+             in1 = getApplicationContext().getAssets().open( "f524ac081d-certificate.pem.crt" );
+             in2 = getApplicationContext().getAssets().open( "f524ac081d-private.pem.key" );
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(MainActivity.this, "This is my Toast message!" + client.getConnectionStatus(),
-                Toast.LENGTH_LONG).show();
+        String outputFile1 = getFilesDir() + "/f524ac081d-certificate.pem.crt";
+        String outputFile2 = getFilesDir() + "/f524ac081d-private.pem.key";
+
+        try {
+            Files.copy(in1, Paths.get(outputFile1));
+            Files.copy(in2, Paths.get(outputFile2));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //connect
+        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(outputFile1, outputFile2);
+
+           client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+        try {
+            client.connect();
+        } catch (AWSIotException e) {
+            e.printStackTrace();
+        }
+
     }
+
     public void publish(){
         String topic = "my/own/topic";
         AWSIotQos qos = AWSIotQos.QOS0;
