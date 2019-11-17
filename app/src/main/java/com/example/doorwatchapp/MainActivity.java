@@ -1,14 +1,8 @@
 package com.example.doorwatchapp;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.res.AssetManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.FileUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,34 +10,12 @@ import android.widget.Toast;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
-import com.amazonaws.services.iot.client.core.AwsIotCompletion;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.Certificate;
-import java.security.spec.PKCS8EncodedKeySpec;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -66,43 +38,47 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }
         });
+        subscribe();
     }
     public void connect() {
 
-        String clientEndpoint = "ajllz5y3u98na-ats.iot.us-west-2.amazonaws.com";       // replace <prefix> and <region> with your own
+        String clientEndpoint = "a2zvv7ph4lra41-ats.iot.us-east-2.amazonaws.com";       // replace <prefix> and <region> with your own
         String clientId = "DoorWatchAppClient1";                              // replace with your own client ID. Use unique client IDs for concurrent connections.
+        String publicCert = "44703cf7e5.cert.pem";
+        String privateKey = "44703cf7e5.private.key";
 
         //get files
         InputStream in1 = null;
         InputStream in2 = null;
         try {
-             in1 = getApplicationContext().getAssets().open( "f524ac081d-certificate.pem.crt" );
-             in2 = getApplicationContext().getAssets().open( "f524ac081d-private.pem.key" );
+             in1 = getApplicationContext().getAssets().open(publicCert);
+             in2 = getApplicationContext().getAssets().open(privateKey);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String outputFile1 = getFilesDir() + "/f524ac081d-certificate.pem.crt";
-        String outputFile2 = getFilesDir() + "/f524ac081d-private.pem.key";
+        String publicCertFile = getFilesDir() + "/" + publicCert;
+        String privateKeiFile = getFilesDir() + "/" + privateKey;
 
         try {
-            Files.copy(in1, Paths.get(outputFile1));
-            Files.copy(in2, Paths.get(outputFile2));
+            Files.copy(in1, Paths.get(publicCertFile));
+            Files.copy(in2, Paths.get(privateKeiFile));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //connect
-        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(outputFile1, outputFile2);
+        SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(publicCertFile, privateKeiFile);
 
-           client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+        client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
         try {
             client.connect();
         } catch (AWSIotException e) {
+            System.out.println("CONNECTION ERROR " + e.getLocalizedMessage());
             e.printStackTrace();
         }
-
+        System.out.println("CONNECTION STATUS " + client.getConnectionStatus());
     }
 
     public void publish(){
@@ -120,13 +96,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void subscribe(){
-        String topicName = "my/own/topic";
+        String topicName = "$aws/things/GG_TrafficLight/shadow/update";
         AWSIotQos qos = AWSIotQos.QOS0;
 
         IotTopic topic = new IotTopic(topicName, qos);
         try {
             client.subscribe(topic);
+            System.out.println("SUBSCRIBE");
         } catch (AWSIotException e) {
+            System.out.println("SUBSCRIBE ERROR");
             e.printStackTrace();
         }
     }
