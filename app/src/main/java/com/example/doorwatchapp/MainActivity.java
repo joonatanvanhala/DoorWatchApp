@@ -6,16 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
-import com.amazonaws.services.iot.client.AWSIotQos;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 //TODO: test subscribe and publish functionality
@@ -29,26 +24,58 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+
         System.out.println("START");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mButton = findViewById(R.id.button);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                Toast.makeText(MainActivity.this, "This is my Toast message!",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
+
+
         //Create new connection to aws iot service
         AwsIotConnection iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
-        //subscribe to required topic(s)
-        iotConnection.subscribe();
-        //wait for message from doorcam client
+        while(true)
+        {
+            //get messages from device
+            String msg = iotConnection.deviceGet();
+            //msg received
+            if(msg != null){
+                try {
+                    JSONObject reader = new JSONObject(msg);
+                    JSONObject state  = reader.getJSONObject("state");
+                    JSONObject desired  = state.getJSONObject("desired");
+                    String property  = desired.getString("property");
+                    System.out.println(property);
+                    if(property.equals("R")){
+                        System.out.println("IS R");
+                        mButton.setVisibility(View.VISIBLE);
+                        Toast.makeText(MainActivity.this, "This is IoT Application!",
+                                Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        //publish users decision
+            }
+            //sleep
+            else{
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+
     }
+
 
 }

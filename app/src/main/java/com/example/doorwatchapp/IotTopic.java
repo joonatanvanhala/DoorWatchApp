@@ -12,5 +12,8 @@ public class IotTopic extends AWSIotTopic {
     @Override
     public void onMessage(AWSIotMessage message) {
         // called when a message is received
+        System.out.println("message received");
+
+        System.out.println(message);
     }
 }

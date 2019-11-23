@@ -1,8 +1,10 @@
 package com.example.doorwatchapp;
+import com.amazonaws.services.iot.client.AWSIotDevice;
 import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
 import android.content.Context;
+import android.net.sip.SipSession;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,12 +13,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class AwsIotConnection {
-
+    private AWSIotDevice device;
     private AWSIotMqttClient client;
     private String clientEndpoint = "a2zvv7ph4lra41-ats.iot.us-east-2.amazonaws.com";
-    private String clientId = "DoorWatchAppClient1";
-    private String publicCert = "44703cf7e5.cert.pem";
-    private String privateKey = "44703cf7e5.private.key";
+    private String clientId = "GG_TrafficLight";
+    private String publicCert = "082dbff0f7.cert.pem";
+    private String privateKey = "082dbff0f7.private.key";
 
     public void connect(Context Context) {
 
@@ -47,13 +49,19 @@ public class AwsIotConnection {
         SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(publicCertFile, privateKeyFile);
 
         client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
+        String thingName = "GG_TrafficLight";
+
+        device = new AWSIotDevice(thingName);
 
         try {
+
             client.connect();
+            client.attach(device);
         } catch (AWSIotException e) {
-            System.out.println("CONNECTION ERROR " + e.getLocalizedMessage());
+            System.out.println("ERROR ATTACH");
             e.printStackTrace();
         }
+
         System.out.println("CONNECTION STATUS " + client.getConnectionStatus());
     }
 
@@ -72,17 +80,42 @@ public class AwsIotConnection {
         }
     }
     public void subscribe(){
-        String topicName = "$aws/things/GG_TrafficLight/shadow/update";
+
+        String topicName = "GG_TrafficLight";
         AWSIotQos qos = AWSIotQos.QOS0;
 
         IotTopic topic = new IotTopic(topicName, qos);
         try {
             client.subscribe(topic);
-            System.out.println("SUBSCRIBE");
+            System.out.println("SUBSCRIBED");
         } catch (AWSIotException e) {
             System.out.println("SUBSCRIBE ERROR");
             e.printStackTrace();
         }
     }
+
+
+    public String deviceGet(){
+        try {
+            String msg = device.get();
+            return msg;
+        } catch (AWSIotException e) {
+            System.out.println("error device");
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public void deviceUpdate(){
+        //String state = "{\"state\":{\"reported\":{\"property\":true}}}";
+        String state = "{\"state\":{\"desired\":{\"property\":\"G\"}}}";
+
+
+        try {
+            device.update(state);
+        } catch (AWSIotException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

@@ -10,7 +10,19 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="180dp"
+        android:layout_marginBottom="469dp"
         android:text="Button"
-        tools:layout_editor_absoluteX="131dp"
-        tools:layout_editor_absoluteY="301dp" />
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="213dp"
+        tools:layout_editor_absoluteY="107dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
