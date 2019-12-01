@@ -65,10 +65,10 @@ public class AwsIotConnection {
         System.out.println("CONNECTION STATUS " + client.getConnectionStatus());
     }
 
-    public void publish(){
+    public void publish(String buttonMessage){
         String topic = "my/own/topic";
         AWSIotQos qos = AWSIotQos.QOS0;
-        String payload = "any payload";
+        String payload = buttonMessage;
         long timeout = 3000;                    // milliseconds
 
 
