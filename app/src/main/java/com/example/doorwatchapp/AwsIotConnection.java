@@ -15,10 +15,10 @@ import java.nio.file.Paths;
 public class AwsIotConnection {
     private AWSIotDevice device;
     private AWSIotMqttClient client;
-    private String clientEndpoint = "a2zvv7ph4lra41-ats.iot.us-east-2.amazonaws.com";
-    private String clientId = "GG_TrafficLight";
-    private String publicCert = "082dbff0f7.cert.pem";
-    private String privateKey = "082dbff0f7.private.key";
+    private String clientEndpoint = "a2r9s929yoyxv5-ats.iot.us-east-2.amazonaws.com";
+    private String clientId = "phone";
+    private String publicCert = "bdb7a3893f.cert.pem";
+    private String privateKey = "bdb7a3893f.private.key";
 
     public void connect(Context Context) {
 
@@ -49,14 +49,10 @@ public class AwsIotConnection {
         SampleUtil.KeyStorePasswordPair pair = SampleUtil.getKeyStorePasswordPair(publicCertFile, privateKeyFile);
 
         client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
-        String thingName = "GG_TrafficLight";
-
-        device = new AWSIotDevice(thingName);
 
         try {
 
             client.connect();
-            client.attach(device);
         } catch (AWSIotException e) {
             System.out.println("ERROR ATTACH");
             e.printStackTrace();
@@ -66,9 +62,9 @@ public class AwsIotConnection {
     }
 
     public void publish(){
-        String topic = "my/own/topic";
+        String topic = "door/state";
         AWSIotQos qos = AWSIotQos.QOS0;
-        String payload = "any payload";
+        String payload = "in";
         long timeout = 3000;                    // milliseconds
 
 
@@ -81,7 +77,7 @@ public class AwsIotConnection {
     }
     public void subscribe(){
 
-        String topicName = "GG_TrafficLight";
+        String topicName = "door/picture";
         AWSIotQos qos = AWSIotQos.QOS0;
 
         IotTopic topic = new IotTopic(topicName, qos);
@@ -93,29 +89,5 @@ public class AwsIotConnection {
             e.printStackTrace();
         }
     }
-
-
-    public String deviceGet(){
-        try {
-            String msg = device.get();
-            return msg;
-        } catch (AWSIotException e) {
-            System.out.println("error device");
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public void deviceUpdate(){
-        //String state = "{\"state\":{\"reported\":{\"property\":true}}}";
-        String state = "{\"state\":{\"desired\":{\"property\":\"G\"}}}";
-
-
-        try {
-            device.update(state);
-        } catch (AWSIotException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }

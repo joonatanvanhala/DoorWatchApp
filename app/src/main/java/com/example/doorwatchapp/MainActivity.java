@@ -13,8 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-//TODO: test subscribe and publish functionality
 //TODO: create eventlistener which triggers if image/message is received from door camera subscription
+//TODO: add base64 encoder
 //TODO: add UI decision functionality for publishing door status
 //TODO: publish users decision
 
@@ -35,45 +35,8 @@ public class MainActivity extends AppCompatActivity {
         //Create new connection to aws iot service
         AwsIotConnection iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
-        while(true)
-        {
-            //get messages from device
-            String msg = iotConnection.deviceGet();
-            //msg received
-            if(msg != null){
-                try {
-                    JSONObject reader = new JSONObject(msg);
-                    JSONObject state  = reader.getJSONObject("state");
-                    JSONObject desired  = state.getJSONObject("desired");
-                    String property  = desired.getString("property");
-                    System.out.println(property);
-                    if(property.equals("R")){
-                        System.out.println("IS R");
-                        mButton.setVisibility(View.VISIBLE);
-                        Toast.makeText(MainActivity.this, "This is IoT Application!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            //sleep
-            else{
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-
-        }
+        iotConnection.subscribe();
+        iotConnection.publish();
 
     }
 

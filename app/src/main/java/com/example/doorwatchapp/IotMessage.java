@@ -11,15 +11,21 @@ public class IotMessage extends AWSIotMessage {
     @Override
     public void onSuccess() {
         // called when message publishing succeeded
+
+        System.out.println("MESSAGE PUBLISHED");
     }
 
     @Override
     public void onFailure() {
         // called when message publishing failed
+        System.out.println("MESSAGE FAILURE");
+
     }
 
     @Override
     public void onTimeout() {
         // called when message publishing timed out
+        System.out.println("MESSAGE TIMEOUT");
+
     }
 }
