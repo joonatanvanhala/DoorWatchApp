@@ -7,22 +7,54 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/no-button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="180dp"
-        android:layout_marginBottom="469dp"
-        android:text="Button"
+        android:layout_marginStart="84dp"
+        android:layout_marginBottom="124dp"
+        android:onClick="closeDoor"
+        android:text="@android:string/cancel"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:text="Ei"
         tools:visibility="visible" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/yes-button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="213dp"
-        tools:layout_editor_absoluteY="107dp" />
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="124dp"
+        android:onClick="openDoor"
+        android:text="@android:string/ok"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Kyllä" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="312dp"
+        android:layout_height="277dp"
+        android:layout_marginTop="106dp"
+        android:layout_marginEnd="50dp"
+        android:scaleType="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_view_id"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="43dp"
+        android:alpha="1"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/no-button"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Päästetäänkö sisään?" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

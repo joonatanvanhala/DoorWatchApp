@@ -4,7 +4,6 @@ import com.amazonaws.services.iot.client.AWSIotException;
 import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
 import android.content.Context;
-import android.net.sip.SipSession;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +18,7 @@ public class AwsIotConnection {
     private String clientId = "phone";
     private String publicCert = "bdb7a3893f.cert.pem";
     private String privateKey = "bdb7a3893f.private.key";
+    private IotTopic topic;
 
     public void connect(Context Context) {
 
@@ -61,12 +61,12 @@ public class AwsIotConnection {
         System.out.println("CONNECTION STATUS " + client.getConnectionStatus());
     }
 
-    public void publish(){
-        String topic = "door/state";
-        AWSIotQos qos = AWSIotQos.QOS0;
-        String payload = "in";
-        long timeout = 3000;                    // milliseconds
 
+    public void publish(String buttonMessage){
+        String topic = "my/own/topic";
+        AWSIotQos qos = AWSIotQos.QOS0;
+        String payload = buttonMessage;
+        long timeout = 3000;                    // milliseconds
 
         IotMessage message = new IotMessage(topic, qos, payload);
         try {
@@ -75,12 +75,12 @@ public class AwsIotConnection {
             e.printStackTrace();
         }
     }
-    public void subscribe(){
+    public IotTopic subscribe(){
 
         String topicName = "door/picture";
         AWSIotQos qos = AWSIotQos.QOS0;
 
-        IotTopic topic = new IotTopic(topicName, qos);
+        topic = new IotTopic(topicName, qos);
         try {
             client.subscribe(topic);
             System.out.println("SUBSCRIBED");
@@ -88,6 +88,6 @@ public class AwsIotConnection {
             System.out.println("SUBSCRIBE ERROR");
             e.printStackTrace();
         }
+        return topic;
     }
-
 }
