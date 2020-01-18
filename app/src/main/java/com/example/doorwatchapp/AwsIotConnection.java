@@ -106,7 +106,4 @@ public class AwsIotConnection {
         }
         return topic;
     }
-    public void yourMethod(){
-
-    }
 }

@@ -1,9 +1,6 @@
 package com.example.doorwatchapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,17 +8,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 
-import com.amazonaws.services.iot.client.AWSIotMqttClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    public AwsIotConnection iotConnection;
+    private AwsIotConnection iotConnection;
     private static TextView text_view_id;
-    public static Button no;
-    public static Button yes;
+    private static Button no;
+    private static Button yes;
     public static ImageView image;
 
     @Override
@@ -33,14 +26,13 @@ public class MainActivity extends AppCompatActivity {
         text_view_id = findViewById(R.id.text_view_id);
         no = findViewById(R.id.no_button);
         yes = findViewById(R.id.yes_button);
-        image = (ImageView) this.findViewById(R.id.image);
+        image = this.findViewById(R.id.image);
         //initially hide content
         hideViewContent();
         //Create new connection to aws iot service
         iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
         iotConnection.subscribe();
-
     }
     @Override
     protected void onResume() {
@@ -49,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public void openDoor(View v) {
         Toast.makeText(this, "Opening door for customer!", Toast.LENGTH_LONG).show();
         String message = "Open door";
-        //iotConnection.publish(message);
+        iotConnection.publish(message);
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
@@ -58,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public void closeDoor(View v) {
         Toast.makeText(this, "Not letting customer in!", Toast.LENGTH_LONG).show();
         String message = "Close door";
-        //iotConnection.publish(message);
+        iotConnection.publish(message);
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
