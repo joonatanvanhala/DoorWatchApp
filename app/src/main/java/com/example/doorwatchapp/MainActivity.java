@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         yes = findViewById(R.id.yes_button);
         image = this.findViewById(R.id.image);
         //initially hide content
-        hideViewContent();
+        //hideViewContent();
         //Create new connection to aws iot service
         iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
