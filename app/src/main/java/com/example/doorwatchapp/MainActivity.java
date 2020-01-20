@@ -1,20 +1,27 @@
 package com.example.doorwatchapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 
+import com.amazonaws.services.iot.client.AWSIotMessage;
+import com.amazonaws.services.iot.client.AWSIotQos;
+import com.amazonaws.services.iot.client.AWSIotTopic;
 
 
 public class MainActivity extends AppCompatActivity {
     private AwsIotConnection iotConnection;
     private static TextView text_view_id;
     private static Button no;
-    private static Button yes;
+    public static Button yes;
     public static ImageView image;
 
     @Override
@@ -32,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         //Create new connection to aws iot service
         iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
-        iotConnection.subscribe();
+        iotConnection.subscribe(this.getApplicationContext());
     }
     @Override
     protected void onResume() {
@@ -45,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
-        hideViewContent();
+        //hideViewContent();
     }
     public void closeDoor(View v) {
         Toast.makeText(this, "Not letting customer in!", Toast.LENGTH_LONG).show();
@@ -54,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
-        hideViewContent();
+        //hideViewContent();
     }
     public static void hideViewContent() {
         System.out.println("hideview");
