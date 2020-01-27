@@ -2,19 +2,13 @@ package com.example.doorwatchapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView;
 
-import com.amazonaws.services.iot.client.AWSIotMessage;
-import com.amazonaws.services.iot.client.AWSIotQos;
-import com.amazonaws.services.iot.client.AWSIotTopic;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void openDoor(View v) {
         Toast.makeText(this, "Opening door for customer!", Toast.LENGTH_LONG).show();
-        String message = "Open door";
+        String message = "in";
         iotConnection.publish(message);
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
@@ -56,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void closeDoor(View v) {
         Toast.makeText(this, "Not letting customer in!", Toast.LENGTH_LONG).show();
-        String message = "Close door";
+        String message = "out";
         iotConnection.publish(message);
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);

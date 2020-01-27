@@ -64,7 +64,7 @@ public class AwsIotConnection {
 
 
     public void publish(String buttonMessage){
-        String topic = "my/own/topic";
+        String topic = "door/state";
         AWSIotQos qos = AWSIotQos.QOS0;
         String payload = buttonMessage;
         long timeout = 3000;                    // milliseconds
