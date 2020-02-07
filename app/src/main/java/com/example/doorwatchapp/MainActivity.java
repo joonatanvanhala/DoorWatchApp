@@ -28,8 +28,11 @@ public class MainActivity extends AppCompatActivity {
         no = findViewById(R.id.no_button);
         yes = findViewById(R.id.yes_button);
         image = this.findViewById(R.id.image);
+        yes.setText("Kyllä");
+        no.setText("Ei");
+        text_view_id.setText("Päästetäänkö sisään?");
         //initially hide content
-        //hideViewContent();
+        hideViewContent();
         //Create new connection to aws iot service
         iotConnection = new AwsIotConnection();
         iotConnection.connect(getApplicationContext());
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
-        //hideViewContent();
+        hideViewContent();
     }
     public void closeDoor(View v) {
         Toast.makeText(this, "Not letting customer in!", Toast.LENGTH_LONG).show();
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         //Remove image from view after user has made selection
         image = findViewById(R.id.image);
         image.setImageDrawable(null);
-        //hideViewContent();
+        hideViewContent();
     }
     public static void hideViewContent() {
         System.out.println("hideview");
