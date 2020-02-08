@@ -4,8 +4,7 @@ import com.amazonaws.services.iot.client.AWSIotMqttClient;
 import com.amazonaws.services.iot.client.AWSIotQos;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class AwsIotConnection {
             in2 = Context.getAssets().open(privateKey);
 
         } catch (IOException e) {
+            Toast.makeText(MainActivity.context, "Cannot locate Iot client certificates", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
         String publicCertFile = Context.getFilesDir() + "/" + publicCert;
@@ -44,6 +44,7 @@ public class AwsIotConnection {
             }
 
         } catch (IOException e) {
+            Toast.makeText(MainActivity.context, "Cannot copy Iot client certificates", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
@@ -52,13 +53,12 @@ public class AwsIotConnection {
         client = new AWSIotMqttClient(clientEndpoint, clientId, pair.keyStore, pair.keyPassword);
 
         try {
-
             client.connect();
         } catch (AWSIotException e) {
-            System.out.println("ERROR ATTACH");
+            Toast.makeText(MainActivity.context, "Error connecting device to Iot Network: " + client.getConnectionStatus(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
-
+        Toast.makeText(MainActivity.context, "IoT connection status: " + client.getConnectionStatus(), Toast.LENGTH_LONG).show();
         System.out.println("CONNECTION STATUS " + client.getConnectionStatus());
     }
 
@@ -72,21 +72,28 @@ public class AwsIotConnection {
         IotMessage message = new IotMessage(topic, qos, payload);
         try {
             client.publish(message, timeout);
+            if(buttonMessage.equals("in")){
+                Toast.makeText(MainActivity.context, "Opening door!", Toast.LENGTH_LONG).show();
+            }
+            else if(buttonMessage.equals("out")){
+                Toast.makeText(MainActivity.context, "Door will not be opened", Toast.LENGTH_LONG).show();
+            }
         } catch (AWSIotException e) {
             e.printStackTrace();
+            Toast.makeText(MainActivity.context, "Unable to publish message" , Toast.LENGTH_LONG).show();
         }
     }
-    public IotTopic subscribe(Context context){
+    public IotTopic subscribe(){
 
         String topicName = "door/picture";
         AWSIotQos qos = AWSIotQos.QOS0;
         topic = new IotTopic(topicName, qos);
-        topic.Setcontext(context);
         try {
             client.subscribe(topic);
             System.out.println("SUBSCRIBED");
         } catch (AWSIotException e) {
-            System.out.println("SUBSCRIBE ERROR");
+            System.out.println("ouio");
+            Toast.makeText(MainActivity.context, "Unable to subscribe to a topic", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
         return topic;
